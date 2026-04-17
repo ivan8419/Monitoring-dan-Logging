@@ -1,0 +1,334 @@
+{
+  "title": "muhammad_ivan_LspW",
+  "tags": ["ml", "fraud-detection", "monitoring"],
+  "timezone": "browser",
+  "schemaVersion": 16,
+  "version": 1,
+  "refresh": "10s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Total Prediction Requests",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus-ds" },
+          "expr": "prediction_requests_total{status=\"success\"}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "none"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Fraud Predictions",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus-ds" },
+          "expr": "fraud_predictions_total",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "red", "mode": "fixed" },
+          "unit": "none"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "Normal Predictions",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus-ds" },
+          "expr": "normal_predictions_total",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "green", "mode": "fixed" },
+          "unit": "none"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Model Accuracy",
+      "type": "gauge",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus-ds" },
+          "expr": "model_accuracy",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 0.75 },
+              { "color": "green", "value": 0.9 }
+            ]
+          },
+          "unit": "percentunit"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "Prediction Latency",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus-ds" },
+          "expr": "rate(prediction_latency_seconds_sum[1m]) / rate(prediction_latency_seconds_count[1m])",
+          "refId": "A",
+          "legendFormat": "Latency"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "s",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
+    },
+    {
+      "id": 6,
+      "title": "CPU Usage",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus-ds" },
+          "expr": "cpu_usage_percent",
+          "refId": "A",
+          "legendFormat": "CPU %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "percent",
+          "max": 100,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
+    },
+    {
+      "id": 7,
+      "title": "Memory Usage",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus-ds" },
+          "expr": "memory_usage_percent",
+          "refId": "A",
+          "legendFormat": "Memory %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "percent",
+          "max": 100,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
+    },
+    {
+      "id": 8,
+      "title": "Request Errors",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus-ds" },
+          "expr": "rate(request_errors_total[1m])",
+          "refId": "A",
+          "legendFormat": "Error Rate"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "red", "mode": "fixed" },
+          "unit": "reqps",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
+    },
+    {
+      "id": 9,
+      "title": "Prediction Confidence Distribution",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus-ds" },
+          "expr": "rate(prediction_confidence_sum{prediction_class=\"fraud\"}[5m]) / rate(prediction_confidence_count{prediction_class=\"fraud\"}[5m])",
+          "refId": "A",
+          "legendFormat": "Fraud Confidence"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus-ds" },
+          "expr": "rate(prediction_confidence_sum{prediction_class=\"normal\"}[5m]) / rate(prediction_confidence_count{prediction_class=\"normal\"}[5m])",
+          "refId": "B",
+          "legendFormat": "Normal Confidence"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "percentunit",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
+    },
+    {
+      "id": 10,
+      "title": "Model Prediction Drift",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus-ds" },
+          "expr": "model_prediction_drift_score",
+          "refId": "A",
+          "legendFormat": "Drift Score"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 0.3 },
+              { "color": "red", "value": 0.5 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 11,
+      "title": "Throughput (Requests/sec)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 28 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus-ds" },
+          "expr": "requests_per_second",
+          "refId": "A",
+          "legendFormat": "Throughput"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "reqps",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
+    },
+    {
+      "id": 12,
+      "title": "Disk Usage",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 28 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus-ds" },
+          "expr": "disk_usage_percent",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "max": 100,
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 70 },
+              { "color": "red", "value": 90 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 13,
+      "title": "API Response Time",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 28 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus-ds" },
+          "expr": "rate(api_response_time_seconds_sum[5m]) / rate(api_response_time_seconds_count[5m])",
+          "refId": "A",
+          "legendFormat": "Response Time"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "s",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
+    }
+  ]
+}

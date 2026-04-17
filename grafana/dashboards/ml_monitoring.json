@@ -1,0 +1,147 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "ml-monitoring",
+    "title": "ML Model Monitoring Dashboard",
+    "tags": ["ml", "monitoring", "fraud-detection"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Model Accuracy",
+        "type": "gauge",
+        "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0},
+        "targets": [
+          {
+            "expr": "model_accuracy",
+            "legendFormat": "Accuracy"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "yellow", "value": 0.75},
+                {"color": "green", "value": 0.85}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "Model Precision",
+        "type": "gauge",
+        "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0},
+        "targets": [
+          {
+            "expr": "model_precision",
+            "legendFormat": "Precision"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Model Recall",
+        "type": "gauge",
+        "gridPos": {"h": 8, "w": 8, "x": 16, "y": 0},
+        "targets": [
+          {
+            "expr": "model_recall",
+            "legendFormat": "Recall"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "CPU Usage",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "targets": [
+          {
+            "expr": "cpu_usage_percent",
+            "legendFormat": "CPU %"
+          }
+        ],
+        "yAxes": [
+          {"label": "CPU %", "max": 100}
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Memory Usage",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+        "targets": [
+          {
+            "expr": "memory_usage_percent",
+            "legendFormat": "Memory %"
+          }
+        ],
+        "yAxes": [
+          {"label": "Memory %", "max": 100}
+        ]
+      },
+      {
+        "id": 6,
+        "title": "API Response Time",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+        "targets": [
+          {
+            "expr": "rate(api_response_time_seconds_sum[5m]) / rate(api_response_time_seconds_count[5m])",
+            "legendFormat": "Avg Response Time"
+          }
+        ],
+        "yAxes": [
+          {"label": "Seconds"}
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Fraud Detection Rate",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+        "targets": [
+          {
+            "expr": "fraud_detection_rate",
+            "legendFormat": "Fraud Rate"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Prediction Drift",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
+        "targets": [
+          {
+            "expr": "prediction_drift_score",
+            "legendFormat": "Drift Score"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Total Predictions",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
+        "targets": [
+          {
+            "expr": "sum(model_predictions_total)",
+            "legendFormat": "Total Predictions"
+          }
+        ]
+      }
+    ],
+    "time": {"from": "now-6h", "to": "now"},
+    "timepicker": {
+      "refresh_intervals": ["5s", "10s", "30s", "1m", "5m"]
+    }
+  },
+  "overwrite": true
+}

@@ -1,0 +1,65 @@
+groups:
+  - name: ml_model_alerts
+    rules:
+      - alert: HighCPUUsage
+        expr: cpu_usage_percent > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is above 80% for more than 5 minutes. Current value: {{ $value }}%"
+
+      - alert: HighMemoryUsage
+        expr: memory_usage_percent > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is above 85%. Current value: {{ $value }}%"
+
+      - alert: HighLatency
+        expr: rate(prediction_latency_seconds_sum[1m]) / rate(prediction_latency_seconds_count[1m]) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High API latency detected"
+          description: "API response time is above 500ms. Current value: {{ $value }}s"
+
+      - alert: LowModelAccuracy
+        expr: model_accuracy < 0.75
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Model accuracy is too low"
+          description: "Model accuracy has dropped below 75%. Current value: {{ $value }}"
+
+      - alert: PredictionDrift
+        expr: model_prediction_drift_score > 0.5
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Model prediction drift detected"
+          description: "Prediction drift score is high. Model may need retraining. Current value: {{ $value }}"
+
+      - alert: HighErrorRate
+        expr: rate(request_errors_total[1m]) > 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate detected"
+          description: "Request error rate is above threshold. Current value: {{ $value }}"
+
+      - alert: HighDiskUsage
+        expr: disk_usage_percent > 90
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High disk usage detected"
+          description: "Disk usage is above 90%. Current value: {{ $value }}%"

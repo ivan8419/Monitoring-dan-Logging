@@ -1,0 +1,132 @@
+apiVersion: 1
+groups:
+  - orgId: 1
+    name: ML Alerts
+    folder: ML Folder
+    interval: 1m
+    rules:
+      - uid: high_cpu
+        title: High CPU Usage
+        condition: B
+        noDataState: OK
+        annotations:
+          description: "CPU usage is above 80% for more than 5 minutes"
+          summary: "High CPU usage detected"
+        labels:
+          severity: warning
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus-ds
+            model:
+              datasource:
+                type: prometheus
+                uid: prometheus-ds
+              expr: cpu_usage_percent
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: B
+            datasourceUid: "__expr__"
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              type: classic_conditions
+              conditions:
+                - evaluator:
+                    params: [80]
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params: [A]
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+
+      - uid: high_latency
+        title: High Latency
+        condition: B
+        noDataState: OK
+        annotations:
+          description: "API response time is above 500ms"
+          summary: "High API latency detected"
+        labels:
+          severity: warning
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus-ds
+            model:
+              datasource:
+                type: prometheus
+                uid: prometheus-ds
+              expr: rate(prediction_latency_seconds_sum[1m]) / rate(prediction_latency_seconds_count[1m])
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: B
+            datasourceUid: "__expr__"
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              type: classic_conditions
+              conditions:
+                - evaluator:
+                    params: [0.5]
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params: [A]
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+
+      - uid: low_accuracy
+        title: Low Model Accuracy
+        condition: B
+        noDataState: OK
+        annotations:
+          description: "Model accuracy has dropped below 75%"
+          summary: "Model accuracy is too low"
+        labels:
+          severity: critical
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: prometheus-ds
+            model:
+              datasource:
+                type: prometheus
+                uid: prometheus-ds
+              expr: model_accuracy
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: B
+            datasourceUid: "__expr__"
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              type: classic_conditions
+              conditions:
+                - evaluator:
+                    params: [0.75]
+                    type: lt
+                  operator:
+                    type: and
+                  query:
+                    params: [A]
+                  reducer:
+                    params: []
+                    type: last
+                  type: query

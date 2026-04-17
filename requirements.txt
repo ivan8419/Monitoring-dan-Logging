@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pandas
+numpy
+prometheus-client
+mlflow==2.19.0
+psutil
+scikit-learn
+requests
