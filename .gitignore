@@ -1,2 +1,17 @@
-# Exclude large CSV files
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# MLflow tracking (if used here)
+mlruns/
+mlflow.db
+
+# Large data files
 *.csv
+*.zip
+*.gz
+
+# IDEs
+.vscode/
+.idea/
