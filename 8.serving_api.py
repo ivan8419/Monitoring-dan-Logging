@@ -19,10 +19,21 @@ class PredictionRequest(BaseModel):
     features: list
 
 try:
-    model_uri = "sqlite:///../Membangun_model/mlflow.db"
-    mlflow.set_tracking_uri(model_uri)
-    model = None
+    # Menggunakan path absolut untuk mlflow.db dan memuat model terbaru
+    import os
+    base_path = os.path.abspath("../Membangun_model")
+    model_db = f"sqlite:///{os.path.join(base_path, 'mlflow.db')}"
+    mlflow.set_tracking_uri(model_db)
+    
+    # Mencari run_id terbaru yang sukses
+    runs = mlflow.search_runs(experiment_names=["Credit Card Fraud Detection"])
+    if not runs.empty:
+        latest_run_id = runs.iloc[0].run_id
+        model = mlflow.pyfunc.load_model(f"runs:/{latest_run_id}/model")
+    else:
+        model = None
 except Exception as e:
+    print(f"Error loading model: {e}")
     model = None
 
 @app.get("/metrics")
@@ -50,6 +61,7 @@ def predict(request: PredictionRequest):
 
         prometheus_exporter.PREDICTION_LATENCY.labels(endpoint='/predict').observe(latency)
         prometheus_exporter.API_RESPONSE_TIME.observe(latency)
+        prometheus_exporter.PREDICTION_VALUE.set(confidence)
 
         if prediction == 1:
             prometheus_exporter.FRAUD_PREDICTIONS.inc()
@@ -64,7 +76,10 @@ def predict(request: PredictionRequest):
 
         prometheus_exporter.REQUEST_COUNT.labels(method='POST', endpoint='/predict', status='success').inc()
 
-        return {"prediction": int(prediction), "confidence": confidence}
+        response_data = {"prediction": int(prediction), "confidence": confidence}
+        prometheus_exporter.RESPONSE_SIZE.observe(len(str(response_data)))
+
+        return response_data
     except Exception as e:
         prometheus_exporter.REQUEST_COUNT.labels(method='POST', endpoint='/predict', status='error').inc()
         prometheus_exporter.REQUEST_ERRORS.labels(error_type='prediction_error').inc()

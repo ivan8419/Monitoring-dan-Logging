@@ -45,6 +45,16 @@ PREDICTION_CONFIDENCE = Histogram(
     ['prediction_class']
 )
 
+PREDICTION_VALUE = Gauge(
+    'prediction_value',
+    'Last Prediction Value (Confidence/Probability)'
+)
+
+RESPONSE_SIZE = Histogram(
+    'response_size_bytes',
+    'API Response Size in bytes'
+)
+
 API_RESPONSE_TIME = Summary(
     'api_response_time_seconds',
     'API Response Time in seconds'
