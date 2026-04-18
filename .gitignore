@@ -8,7 +8,6 @@ mlruns/
 mlflow.db
 
 # Large data files
-*.csv
 *.zip
 *.gz
 
